@@ -23,7 +23,7 @@ module.exports = function (options) {
 
   var stream = through.obj(function(file, enc, callback) {
     var that = this;
-    
+
     if(file.isNull()) {
       that.push(file);
       return callback();
@@ -39,6 +39,10 @@ module.exports = function (options) {
 
         if(!arialinter.evaluate(options)) {
           gutil.log(PLUGIN_NAME, arialinter.getReport('text', file.path));
+
+          if (arialinter.getErrorsFound()) {
+              throw new Error('ARIA linting failed!');
+          }
         }
 
         that.push(file);
